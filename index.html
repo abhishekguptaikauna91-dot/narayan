@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Narayan Vastralay</title>
+<style>
+body{font-family:Arial;margin:0;background:#fff7f0}
+header{background:#8e2de2;color:#fff;padding:20px;text-align:center}
+.category{margin:20px}
+.card{background:#fff;padding:15px;margin:10px 0;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.1)}
+button{background:#25D366;color:#fff;border:none;padding:8px 12px;border-radius:6px}
+</style>
+</head>
+<body>
+
+<header>
+<h1>नारायण वस्त्रालय</h1>
+<p>थोक विक्रेता | इकौना, श्रावस्ती</p>
+</header>
+
+<div id="content">लोड हो रहा है...</div>
+
+<script>
+const SHEET_ID = 1qYASSj0HKtNJKiAr3rjOYlz14uuLTE05Ujv8fuHizj0;
+const URL = `https://opensheet.elk.sh/${SHEET_ID}/Sheet1`;
+
+fetch(URL)
+.then(res => res.json())
+.then(data => {
+  const grouped = {};
+  data.forEach(r => {
+    if(!grouped[r.Category]) grouped[r.Category] = [];
+    grouped[r.Category].push(r);
+  });
+
+  let html = "";
+  for(const cat in grouped){
+    html += `<div class='category'><h2>${cat}</h2>`;
+    grouped[cat].forEach(it => {
+      const msg = encodeURIComponent(
+        `नमस्ते, मुझे यह आइटम चाहिए:\n${it.ItemName}\nदाम: ₹${it.Price}`
+      );
+      html += `
+        <div class='card'>
+          <b>${it.ItemName}</b><br>
+          ₹ ${it.Price}<br><br>
+          <a href="https://wa.me/91${it.WhatsApp}?text=${msg}" target="_blank">
+            <button>WhatsApp Enquiry</button>
+          </a>
+        </div>`;
+    });
+    html += `</div>`;
+  }
+
+  document.getElementById("content").innerHTML = html;
+})
+.catch(()=>{
+  document.getElementById("content").innerHTML = "Data load नहीं हो पाया";
+});
+</script>
+
+</body>
+</html>
