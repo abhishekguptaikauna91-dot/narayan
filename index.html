@@ -3,61 +3,159 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Narayan Vastralay</title>
+<title>नारायण वस्त्रालय | इकौना</title>
+
 <style>
-body{font-family:Arial;margin:0;background:#fff7f0}
-header{background:#8e2de2;color:#fff;padding:20px;text-align:center}
-.category{margin:20px}
-.card{background:#fff;padding:15px;margin:10px 0;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.1)}
-button{background:#25D366;color:#fff;border:none;padding:8px 12px;border-radius:6px}
+body{
+  margin:0;
+  font-family: 'Segoe UI', sans-serif;
+  background:#fff8f2;
+}
+header{
+  background:linear-gradient(135deg,#7b2ff7,#f107a3);
+  color:white;
+  padding:40px 20px;
+  text-align:center;
+}
+header h1{margin:0;font-size:36px}
+header p{margin-top:10px;font-size:18px}
+
+.about{
+  padding:30px;
+  text-align:center;
+  background:#fff;
+}
+.about h2{color:#7b2ff7}
+.about p{max-width:700px;margin:auto;font-size:16px}
+
+.categories{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:15px;
+  padding:20px;
+}
+.cat-btn{
+  background:white;
+  border-radius:12px;
+  padding:20px;
+  text-align:center;
+  cursor:pointer;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+  font-weight:bold;
+  transition:.3s;
+}
+.cat-btn:hover{
+  background:#f3e8ff;
+}
+
+.products{
+  padding:20px;
+}
+.card{
+  background:white;
+  border-radius:12px;
+  margin-bottom:20px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+  overflow:hidden;
+}
+.card img{
+  width:100%;
+  height:250px;
+  object-fit:cover;
+}
+.card-content{
+  padding:15px;
+}
+.card-content h3{margin:0;color:#333}
+.price{font-size:18px;color:#f107a3;margin:8px 0}
+
+button{
+  background:#25D366;
+  color:white;
+  border:none;
+  padding:10px 16px;
+  border-radius:6px;
+  font-size:15px;
+  cursor:pointer;
+}
+footer{
+  background:#222;
+  color:white;
+  text-align:center;
+  padding:15px;
+  margin-top:40px;
+}
 </style>
 </head>
+
 <body>
 
 <header>
-<h1>नारायण वस्त्रालय</h1>
-<p>थोक विक्रेता | इकौना, श्रावस्ती</p>
+  <h1>नारायण वस्त्रालय</h1>
+  <p>थोक वस्त्र विक्रेता | इकौना, श्रावस्ती</p>
 </header>
 
-<div id="content">लोड हो रहा है...</div>
+<section class="about">
+  <h2>हमारे बारे में</h2>
+  <p>
+    नारायण वस्त्रालय में आपको साड़ी, ब्लाउज, नाइटी एवं अन्य वस्त्र
+    **उचित दामों पर थोक एवं खुदरा** में उपलब्ध हैं।
+    हमारा उद्देश्य है – अच्छी क्वालिटी, सही कीमत और भरोसेमंद सेवा।
+  </p>
+</section>
+
+<h2 style="text-align:center">हमारी श्रेणियाँ</h2>
+<div class="categories" id="categories"></div>
+
+<div class="products" id="products"></div>
+
+<footer>
+  © 2025 नारायण वस्त्रालय | इकौना, श्रावस्ती
+</footer>
 
 <script>
 const SHEET_ID = "1qYASSj0HKtNJKiAr3rjOYlz14uuLTE05Ujv8fuHizj0";
 const URL = `https://opensheet.elk.sh/${SHEET_ID}/Sheet1`;
 
+let DATA = {};
+
 fetch(URL)
-.then(res => res.json())
-.then(data => {
-  const grouped = {};
-  data.forEach(r => {
-    if(!grouped[r.Category]) grouped[r.Category] = [];
-    grouped[r.Category].push(r);
+.then(res=>res.json())
+.then(data=>{
+  data.forEach(r=>{
+    if(!DATA[r.category]) DATA[r.category]=[];
+    DATA[r.category].push(r);
   });
 
-  let html = "";
-  for(const cat in grouped){
-    html += `<div class='category'><h2>${cat}</h2>`;
-    grouped[cat].forEach(it => {
-      const msg = encodeURIComponent(
-        `नमस्ते, मुझे यह आइटम चाहिए:\n${it.ItemName}\nदाम: ₹${it.Price}`
-      );
-      html += `
-        <div class='card'>
-          <b>${it.ItemName}</b><br>
-          ₹ ${it.Price}<br><br>
-          <a href="https://wa.me/91${it.WhatsApp}?text=${msg}" target="_blank">
+  const catDiv=document.getElementById("categories");
+  for(const cat in DATA){
+    catDiv.innerHTML+=`
+      <div class="cat-btn" onclick="showCategory('${cat}')">
+        ${cat.toUpperCase()}
+      </div>`;
+  }
+});
+
+function showCategory(cat){
+  const p=document.getElementById("products");
+  p.innerHTML=`<h2>${cat.toUpperCase()}</h2>`;
+  DATA[cat].forEach(it=>{
+    const msg=encodeURIComponent(
+      `नमस्ते, मुझे यह आइटम चाहिए:\n${it.itemname}\nदाम: ₹${it.price}`
+    );
+    p.innerHTML+=`
+      <div class="card">
+        ${it.image ? `<img src="${it.image}">` : ``}
+        <div class="card-content">
+          <h3>${it.itemname}</h3>
+          <div class="price">₹ ${it.price}</div>
+          <a href="https://wa.me/91${it.whatsapp}?text=${msg}" target="_blank">
             <button>WhatsApp Enquiry</button>
           </a>
-        </div>`;
-    });
-    html += `</div>`;
-  }
-
-  document.getElementById("content").innerHTML = html;
-})
-.catch(()=>{
-  document.getElementById("content").innerHTML = "Data load नहीं हो पाया";
-});
+        </div>
+      </div>`;
+  });
+}
 </script>
 
 </body>
